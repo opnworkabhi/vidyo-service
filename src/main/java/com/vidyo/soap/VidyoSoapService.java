@@ -9,7 +9,7 @@ import com.vidyo.model.response.CreateScheduledRoomResponse;
 
 public interface VidyoSoapService {
 
-    LogInResponse logIn(LogInRequest loginRequest);
+    LogInResponse logIn();
 
     CreateScheduledRoomResponse createScheduledRoom(CreateScheduledRoomRequest createScheduledRoomRequest);
 

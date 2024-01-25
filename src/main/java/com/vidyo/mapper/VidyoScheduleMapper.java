@@ -13,6 +13,7 @@ public class VidyoScheduleMapper {
         vidyoScheduleDto.setRoomName(Optional.ofNullable(roomName).orElse("default"));
         vidyoScheduleDto.setUserName(Optional.ofNullable(userName).orElse("default"));
         vidyoScheduleDto.setRoomURL(Optional.ofNullable(roomURL).orElse(""));
+        vidyoScheduleDto.setRoomStatus("Active"); // while creation mark status as active
         vidyoScheduleDto.setDate(LocalDate.now());
         return vidyoScheduleDto;
     }

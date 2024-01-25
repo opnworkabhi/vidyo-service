@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vidyo-k8s-service-deployment-v2
+  labels:
+    app: vidyo-k8s-service-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: vidyo-k8s-service-v2
+  template:
+    metadata:
+      labels:
+        app: vidyo-k8s-service-v2
+    spec:
+      containers:
+        - name: vidyo-k8s-service-v2
+          image: sanjay10121985/vidyo-service-v2
+          ports:
+            - containerPort: 8080

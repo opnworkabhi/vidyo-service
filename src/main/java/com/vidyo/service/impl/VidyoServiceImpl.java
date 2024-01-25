@@ -27,7 +27,7 @@ public class VidyoServiceImpl implements VidyoService{
     CustomVidyoScheduleRepository customVidyoScheduleRepository;
 
     @Override
-    public List<ShowScheduledRoomResponse> getRoomRequest(ShowScheduledRoomRequest showScheduledRoomRequest) {
+    public List<ShowScheduledRoomResponse> getRoomRequest(LocalDate date) {
         List<VidyoScheduleDto> roomList;
         // added option to fetch room for specific day else default current date
 
@@ -36,7 +36,7 @@ public class VidyoServiceImpl implements VidyoService{
         //roomList  = vidyoScheduleRepository.findAll(); // find all rooms
         //System.out.println("room list ## "+roomList); // update with log
 
-        roomList = customVidyoScheduleRepository.findByDate(Optional.of(showScheduledRoomRequest.getDate()).orElse(LocalDate.now())); // specific date or current date
+        roomList = customVidyoScheduleRepository.findByDate(Optional.of(date).orElse(LocalDate.now())); // specific date or current date
         //roomList = customVidyoScheduleRepository.findByDate(showScheduledRoomRequest.getDate()); // specific date or current date
 
         List<ShowScheduledRoomResponse> roomResponseList = new ArrayList<>();
@@ -45,6 +45,8 @@ public class VidyoServiceImpl implements VidyoService{
             roomResponse.setUserName(rooms.getUserName());
             roomResponse.setRoomName(rooms.getRoomName());
             roomResponse.setRoomURL(rooms.getRoomURL());
+            roomResponse.setRoomURL(rooms.getRoomURL());
+            roomResponse.setRoomStatus(rooms.getRoomStatus());
             roomResponse.setStatus(String.valueOf(HttpStatus.OK));
             roomResponse.setMessage(String.valueOf(HttpStatus.FOUND));
             roomResponseList.add(roomResponse);

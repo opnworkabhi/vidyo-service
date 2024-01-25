@@ -11,6 +11,7 @@ public class ShowScheduledRoomResponse {
     private String roomName;
     private String userName;
     private String roomURL;
+    private String roomStatus;
     private String status;
     private String error;
     private String message;

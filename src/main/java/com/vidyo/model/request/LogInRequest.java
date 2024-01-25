@@ -8,9 +8,5 @@ import lombok.ToString;
 @Setter
 @ToString
 public class LogInRequest {
-    private String clientType;
-    private String userRole;
-    private String userId;
-    private String password;
 
 }

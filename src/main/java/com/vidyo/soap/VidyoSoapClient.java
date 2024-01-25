@@ -47,7 +47,7 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
     VidyoScheduleMapper vidyoScheduleMapper;
 
     @Override
-    public LogInResponse logIn(LogInRequest request) {
+    public LogInResponse logIn() {
         HttpHeaders headers = setHttpHeaders("logIn"); // pass header input from request
         com.vidyo.portal.stub.LogInRequest soapRequest =  new com.vidyo.portal.stub.LogInRequest();  // get dynamic request
         StringWriter stringWriter = new StringWriter();
@@ -69,6 +69,7 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
         LogInResponse logInResponse = new LogInResponse();
         logInResponse.setStatus(String.valueOf(HttpStatus.OK));
         logInResponse.setMessage(String.valueOf(HttpStatus.ACCEPTED));
+
 
         return logInResponse;
     }
@@ -159,6 +160,13 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
         disconnectConferenceAllResponse.setStatus(String.valueOf(HttpStatus.OK));
         disconnectConferenceAllResponse.setMessage(String.valueOf(HttpStatus.RESET_CONTENT));
 
+        // DB operation to update room status
+        Optional<VidyoScheduleDto> vidyoSchedule  = vidyoScheduleRepository.findById(request.getRoomName());
+        if(vidyoSchedule.isPresent()){
+            VidyoScheduleDto vidyoScheduleDto = vidyoSchedule.get();
+            vidyoScheduleDto.setRoomStatus("Inactive");
+            vidyoScheduleRepository.save(vidyoScheduleDto);
+        }
         return disconnectConferenceAllResponse;
     }
 

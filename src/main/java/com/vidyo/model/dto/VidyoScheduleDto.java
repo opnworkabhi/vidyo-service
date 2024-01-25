@@ -17,5 +17,6 @@ public class VidyoScheduleDto {
     private String roomName;
     private String userName;
     private String roomURL;
+    private String roomStatus;
     private LocalDate date;
 }
