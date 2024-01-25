@@ -7,6 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class LogInRequest {
-
+public class DisconnectConferenceAllRequest {
+    private String roomKey;
+    private String roomName;
 }

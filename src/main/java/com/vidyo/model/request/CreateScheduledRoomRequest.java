@@ -4,11 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @ToString
-public class ShowScheduledRoomRequest {
-    private LocalDate date;
+public class CreateScheduledRoomRequest {
+    private String userName;
+    private String roomName;
 }
