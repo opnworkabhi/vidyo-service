@@ -9,7 +9,6 @@ import java.util.Optional;
 @Service
 public class VidyoScheduleMapper {
 
-    // do the mapping
     public VidyoScheduleDto mapScheduleRoom(String roomName, String userName, String roomURL){
         VidyoScheduleDto vidyoScheduleDto = new VidyoScheduleDto();
         vidyoScheduleDto.setRoomName(Optional.ofNullable(roomName).orElse("default"));
