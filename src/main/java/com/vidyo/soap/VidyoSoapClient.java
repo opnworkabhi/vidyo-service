@@ -4,7 +4,6 @@ import com.vidyo.mapper.VidyoScheduleMapper;
 import com.vidyo.model.VidyoConstant;
 import com.vidyo.model.dto.VidyoScheduleDto;
 import com.vidyo.model.request.DisconnectConferenceAllRequest;
-import com.vidyo.model.request.LogInRequest;
 import com.vidyo.model.request.CreateScheduledRoomRequest;
 import com.vidyo.model.response.DisconnectConferenceAllResponse;
 import com.vidyo.model.response.LogInResponse;

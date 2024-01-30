@@ -1,7 +1,6 @@
 package com.vidyo.service.impl;
 
 import com.vidyo.model.dto.VidyoScheduleDto;
-import com.vidyo.model.request.ShowScheduledRoomRequest;
 import com.vidyo.model.response.ShowScheduledRoomResponse;
 import com.vidyo.repository.CustomVidyoScheduleRepository;
 import com.vidyo.service.VidyoService;
