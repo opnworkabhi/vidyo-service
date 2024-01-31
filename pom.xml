@@ -5,10 +5,10 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>vidyo-moderators-service</artifactId>
+    <artifactId>vidyo-service</artifactId>
     <packaging>jar</packaging>
-    <name>Vidyo Moderators Apps</name>
-    <version>1.0</version>
+    <name>Vidyo Apps</name>
+    <version>1.0-SNAPSHOT</version>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
