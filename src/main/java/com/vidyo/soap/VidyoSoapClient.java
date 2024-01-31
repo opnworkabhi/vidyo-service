@@ -9,6 +9,7 @@ import com.vidyo.model.response.DisconnectConferenceAllResponse;
 import com.vidyo.model.response.LogInResponse;
 import com.vidyo.model.response.CreateScheduledRoomResponse;
 import com.vidyo.repository.VidyoScheduleRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,8 +47,8 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
     VidyoScheduleMapper vidyoScheduleMapper;
 
     @Override
-    public LogInResponse logIn() {
-        HttpHeaders headers = setHttpHeaders("logIn"); // pass header input from request
+    public LogInResponse logIn(String basicAuth) {
+        HttpHeaders headers = setHttpHeaders("logIn", basicAuth); // pass header input from request
         com.vidyo.portal.stub.LogInRequest soapRequest =  new com.vidyo.portal.stub.LogInRequest();  // get dynamic request
         StringWriter stringWriter = new StringWriter();
 
@@ -69,13 +70,12 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
         logInResponse.setStatus(String.valueOf(HttpStatus.OK));
         logInResponse.setMessage(String.valueOf(HttpStatus.ACCEPTED));
 
-
         return logInResponse;
     }
 
     @SneakyThrows
     @Override
-    public CreateScheduledRoomResponse createScheduledRoom(CreateScheduledRoomRequest request) {
+    public CreateScheduledRoomResponse createScheduledRoom(CreateScheduledRoomRequest request, String basicAuth) {
         // db call and check the room is exist or not
         // if roomName exist then return that
         // else call soap service get room url and persist in db then return that
@@ -92,7 +92,7 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
         } else {
             System.out.println("vidyoSchedule not found for roomName ----" + request.getRoomName()); // add log
 
-            HttpHeaders headers = setHttpHeaders("createScheduledRoom"); // pass header input from request
+            HttpHeaders headers = setHttpHeaders("createScheduledRoom", basicAuth); // pass header input from request
             com.vidyo.portal.stub.CreateScheduledRoomRequest soapRequest =  new com.vidyo.portal.stub.CreateScheduledRoomRequest();  // get dynamic request
             StringWriter stringWriter = new StringWriter();
 
@@ -128,11 +128,11 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
 
     @SneakyThrows
     @Override
-    public DisconnectConferenceAllResponse disconnectConferenceAll(DisconnectConferenceAllRequest request) {
+    public DisconnectConferenceAllResponse disconnectConferenceAll(DisconnectConferenceAllRequest request, String basicAuth) {
         //Call getEntityByRoomKeyResponse and get EntityId/ConfrenceId to pass in disconnect call request
-        String confrenceId = getEntityByRoomKeyResponse(request.getRoomKey()); // pass roomKey
+        String confrenceId = getEntityByRoomKeyResponse(request.getRoomKey(), basicAuth); // pass roomKey
 
-        HttpHeaders headers = setHttpHeaders("disconnectConferenceAll"); // pass header input from request
+        HttpHeaders headers = setHttpHeaders("disconnectConferenceAll", basicAuth); // pass header input from request
         com.vidyo.portal.stub.DisconnectConferenceAllRequest soapRequest =  new com.vidyo.portal.stub.DisconnectConferenceAllRequest();  // get dynamic request
         soapRequest.setConferenceID(confrenceId); // need to verify
         StringWriter stringWriter = new StringWriter();
@@ -170,8 +170,8 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
     }
 
     @SneakyThrows
-    public String getEntityByRoomKeyResponse(String roomKey) {
-        HttpHeaders headers = setHttpHeaders("getEntityByRoomKey"); // pass header input from request
+    public String getEntityByRoomKeyResponse(String roomKey, String basicAuth) {
+        HttpHeaders headers = setHttpHeaders("getEntityByRoomKey", basicAuth); // pass header input from request
         com.vidyo.portal.stub.GetEntityByRoomKeyRequest soapRequest =  new com.vidyo.portal.stub.GetEntityByRoomKeyRequest();  // get dynamic request
         soapRequest.setRoomKey(roomKey); // need to verify
         StringWriter stringWriter = new StringWriter();
@@ -197,15 +197,16 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
         return entityId.get(0); // return entityId/confrenceId
     }
 
-    private HttpHeaders setHttpHeaders(String serviceName) {
+    private HttpHeaders setHttpHeaders(String serviceName, String basicAuth) {
         HttpHeaders headers = new HttpHeaders();
         // pass content type
         headers.setContentType(MediaType.TEXT_XML);
         // pass SOAPAction as service name
         headers.set(VidyoConstant.SOAP_ACTION,serviceName);
         // dynamic credential
-        String authHeader = "Basic " + base64Encode("ssingh:ssingh");
-        headers.set(HttpHeaders.AUTHORIZATION, authHeader);
+        //String authHeader = "Basic " + base64Encode("ssingh:ssingh");
+        //headers.set(HttpHeaders.AUTHORIZATION, authHeader);
+        headers.set(HttpHeaders.AUTHORIZATION, basicAuth);
         return headers;
     }
 
