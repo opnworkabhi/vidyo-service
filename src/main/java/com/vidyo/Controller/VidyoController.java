@@ -36,7 +36,6 @@ public class VidyoController {
     @PostMapping("/login")
     public LogInResponse logIn(HttpServletRequest request) {
         String basicAuth = request.getHeader("Authorization");
-        //System.out.println("test --- "+ request.getHeader("Authorization"));
         return vidyoSoapService.logIn(basicAuth);
     }
 
@@ -51,7 +50,6 @@ public class VidyoController {
 
     // db call and to get scheduled rooms name list created for day and show
     @GetMapping("/showScheduledRoomList")
-    //public List<ShowScheduledRoomResponse> showScheduledRoomList(@RequestBody ShowScheduledRoomRequest showScheduledRoomRequest){
     public List<ShowScheduledRoomResponse> showScheduledRoomList(@RequestParam("date") LocalDate date){
         return vidyoService.getRoomRequest(date);
     }

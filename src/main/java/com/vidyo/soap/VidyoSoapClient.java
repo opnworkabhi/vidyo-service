@@ -8,6 +8,8 @@ import com.vidyo.model.request.CreateScheduledRoomRequest;
 import com.vidyo.model.response.DisconnectConferenceAllResponse;
 import com.vidyo.model.response.LogInResponse;
 import com.vidyo.model.response.CreateScheduledRoomResponse;
+import com.vidyo.portal.stub.GetEntityByRoomKeyRequest;
+import com.vidyo.portal.stub.LogInRequest;
 import com.vidyo.repository.VidyoScheduleRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
@@ -29,10 +31,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.vidyo.model.VidyoConstant.ENDPOINT_URL;
 
@@ -49,7 +48,7 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
     @Override
     public LogInResponse logIn(String basicAuth) {
         HttpHeaders headers = setHttpHeaders("logIn", basicAuth); // pass header input from request
-        com.vidyo.portal.stub.LogInRequest soapRequest =  new com.vidyo.portal.stub.LogInRequest();  // get dynamic request
+        LogInRequest soapRequest =  new LogInRequest();  // get dynamic request
         StringWriter stringWriter = new StringWriter();
 
         jaxb2Marshaller.marshal(soapRequest,new StreamResult(stringWriter)); // convert
@@ -57,9 +56,10 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
 
         // Set the request entity with headers and the SOAP request
         HttpEntity<String> requestEntity = new HttpEntity<>(requestFormatter(loginRequest), headers);
-        System.out.println("requestEntity ----" + requestEntity);
+        System.out.println("SOAP requestEntity of logIn ----" + requestEntity); // add logger
         // Create RestTemplate instance
         RestTemplate restTemplate = new RestTemplate();
+
         // Perform the POST request
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(ENDPOINT_URL, requestEntity, String.class);
         // Extract and print the response
@@ -70,6 +70,26 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
         logInResponse.setStatus(String.valueOf(HttpStatus.OK));
         logInResponse.setMessage(String.valueOf(HttpStatus.ACCEPTED));
 
+        /*ResponseEntity<String> responseEntity = null;
+        LogInResponse logInResponse = new LogInResponse();
+        try {
+            // Perform the POST request
+            responseEntity = restTemplate.postForEntity(ENDPOINT_URL, requestEntity, String.class);
+            System.out.println("responseEntity----" + responseEntity); //
+            // Extract and print the response
+            String soapResponse = responseEntity.getBody(); // for further use for pak1 and pak2
+            System.out.println("SOAP Response of login ----" + soapResponse); // add logger
+            System.out.println("responseEntity getStatusCode...." + responseEntity.getStatusCode()); // 200 OK
+            if(Objects.equals(responseEntity.getStatusCode().toString(), "200 OK")){
+                logInResponse.setStatus(String.valueOf(HttpStatus.OK));
+                logInResponse.setMessage(String.valueOf(HttpStatus.ACCEPTED));
+            }
+        } catch (Exception exception){
+            if(exception.getMessage().contains("401")){
+                logInResponse.setStatus(String.valueOf(HttpStatus.UNAUTHORIZED));
+                logInResponse.setMessage(String.valueOf(HttpStatus.NOT_FOUND));
+            }
+        }*/
         return logInResponse;
     }
 
@@ -77,7 +97,7 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
     @Override
     public CreateScheduledRoomResponse createScheduledRoom(CreateScheduledRoomRequest request, String basicAuth) {
         // db call and check the room is exist or not
-        // if roomName exist then return that
+        // if roomName exist then return from db
         // else call soap service get room url and persist in db then return that
         CreateScheduledRoomResponse createScheduledRoomResponse = new CreateScheduledRoomResponse();
         Optional<VidyoScheduleDto> vidyoSchedule  = vidyoScheduleRepository.findById(request.getRoomName());
@@ -101,14 +121,14 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
 
             // Set the request entity with headers and the SOAP request
             HttpEntity<String> requestEntity = new HttpEntity<>(requestFormatter(scheduledRoomRequest), headers);
-            System.out.println("requestEntity ----" + requestEntity);
+            System.out.println("SOAP requestEntity of createScheduledRoom ----" + requestEntity); // add logger
             // Create RestTemplate instance
             RestTemplate restTemplate = new RestTemplate();
             // Perform the POST request
             ResponseEntity<String> responseEntity = restTemplate.postForEntity(ENDPOINT_URL, requestEntity, String.class);
             // Extract and print the response
             String soapResponse = responseEntity.getBody();
-            System.out.println("SOAP Response of scheduledRoomResponse ----" + soapResponse); // instead add log
+            System.out.println("SOAP Response of scheduledRoom ----" + soapResponse); // instead add log
 
             List<String> roomURL = getFullNameFromXml(soapResponse, "ns1:roomURL");
             System.out.println("roomURL ---- " + roomURL.get(0));
@@ -142,14 +162,14 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
 
         // Set the request entity with headers and the SOAP request
         HttpEntity<String> requestEntity = new HttpEntity<>(requestFormatter(disconnectConferenceAllRequest), headers);
-        System.out.println("requestEntity ----" + requestEntity);
+        System.out.println("SOAP requestEntity of disconnectConferenceAll ----" + requestEntity); // add logger
         // Create RestTemplate instance
         RestTemplate restTemplate = new RestTemplate();
         // Perform the POST request
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(ENDPOINT_URL, requestEntity, String.class);
         // Extract and print the response
         String soapResponse = responseEntity.getBody();
-        System.out.println("SOAP Response of disconnectConferenceAllResponse ----" + soapResponse); // instead add log
+        System.out.println("SOAP Response of disconnectConferenceAll ----" + soapResponse); // instead add log
 
         List<String> status = getFullNameFromXml(soapResponse, "ns1:OK");
         System.out.println("status ---- " + status.get(0));
@@ -172,7 +192,7 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
     @SneakyThrows
     public String getEntityByRoomKeyResponse(String roomKey, String basicAuth) {
         HttpHeaders headers = setHttpHeaders("getEntityByRoomKey", basicAuth); // pass header input from request
-        com.vidyo.portal.stub.GetEntityByRoomKeyRequest soapRequest =  new com.vidyo.portal.stub.GetEntityByRoomKeyRequest();  // get dynamic request
+        GetEntityByRoomKeyRequest soapRequest =  new GetEntityByRoomKeyRequest();  // get dynamic request
         soapRequest.setRoomKey(roomKey); // need to verify
         StringWriter stringWriter = new StringWriter();
 
@@ -181,7 +201,7 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
 
         // Set the request entity with headers and the SOAP request
         HttpEntity<String> requestEntity = new HttpEntity<>(requestFormatter(getEntityByRoomKeyRequest), headers);
-        System.out.println("requestEntity ----" + requestEntity);
+        System.out.println("SOAP requestEntity of getEntityByRoomKey ----" + requestEntity); // add logger
         // Create RestTemplate instance
         RestTemplate restTemplate = new RestTemplate();
         // Perform the POST request
@@ -189,10 +209,10 @@ public class VidyoSoapClient extends WebServiceTemplate implements VidyoSoapServ
         System.out.println("responseEntity ----" + responseEntity);
         // Extract and print the response
         String soapResponse = responseEntity.getBody();
-        System.out.println("SOAP Response of getEntityByRoomKeyResponse ---- " + soapResponse); // instead add log
+        System.out.println("SOAP Response of getEntityByRoomKey ---- " + soapResponse); // instead add log
 
         List<String> entityId = getFullNameFromXml(soapResponse, "ns1:entityID");
-        System.out.println("entityId/confrenceId ---- " + entityId.get(0));
+        System.out.println("entityId/confrenceId ---- " + entityId.get(0)); // add logger
 
         return entityId.get(0); // return entityId/confrenceId
     }
