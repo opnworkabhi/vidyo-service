@@ -11,7 +11,6 @@ import com.vidyo.model.response.CreateScheduledRoomResponse;
 import com.vidyo.portal.stub.GetEntityByRoomKeyRequest;
 import com.vidyo.portal.stub.LogInRequest;
 import com.vidyo.repository.VidyoScheduleRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
